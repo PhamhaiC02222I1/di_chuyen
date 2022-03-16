@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script src="Circle.js"></script>
+    <script src="Cirle1.js"></script>
+    <script src="Rectangle.js"></script>
+</head>
+<body>
+<canvas id="myCanvas" width="800px" height="600px" style="background-color: bisque"></canvas>
+<!--<canvas id="myCanvas2" width="400px" height="600px" style="background-color: #b6d779"></canvas>-->
+<script>
+  let canvas = document.getElementById('myCanvas');
+  let pen = canvas.getContext('2d');
+let score =0
+  let circle = new Circle(200,200);
+let circle1 = new Circle1(200,250,"red")
+  let rect = new Rectangle(50,50,50,50,'green')
+  let rect1 = new Rectangle(300,350,50,50,'green')
+  let rect2 = new Rectangle(500,500,50,50,'green')
+  // let rect3 = new Rectangle(400,450,50,50,'green')
+  // let rect4 = new Rectangle(430,550,50,50,'green')
+  // let enemy = new Circle(400,100,"red");
+
+  // setInterval(move,50);
+
+  function move() {
+    if (rect1.x+rect1.width>canvas.width){
+        rect1.x=0;
+        rect1.x+=3
+    }
+    if (rect2.x+rect2.width>canvas.width){
+        rect2.x=0;
+        rect2.x+=3
+    }
+    if (rect.x+rect.width>canvas.width) {
+          rect.x = 0;
+          rect.x += 3
+      }
+    // if (rect3.x+rect3.width>canvas.width){
+    //     rect3.x=0;
+    //     rect3.x+=3
+    // }
+    // if (rect4.x+rect4.width>canvas.width) {
+    //     rect4.x = 0;
+    //     rect4.x += 3
+    // }
+    if(circle.x + circle.radius>= canvas.width ) {
+        // alert("Die")
+        circle.x = circle.radius
+        circle.x+=circle.speed;
+    }
+        if (circle.x-circle.radius <=0 ){
+            circle.x=canvas.width-circle.radius;
+            circle.x-=circle.speed
+
+    }
+    if(circle.y+circle.radius  >= canvas.height) {
+        // alert("Die")
+        circle.y = circle.radius
+        circle.y+=circle.speed;
+    }
+    if (circle.y-circle.radius <=0 ){
+        circle.y=canvas.height-circle.radius
+        circle.y-=circle.speed
+    }
+    pen.clearRect(0,0,canvas.width,canvas.height);
+    rect.moverec()
+      rect1.moverec()
+      rect2.moverec()
+    circle.move();
+      rect.drawRect(canvas);
+      rect1.drawRect(canvas);
+      rect2.drawRect(canvas);
+    circle.render(canvas);
+    circle1.render1(canvas)
+    // enemy.render(canvas);
+    if(checkCrash(circle,circle1)){
+        let randX = Math.floor(Math.random()*canvas.width);
+        let randY = Math.floor(Math.random()*canvas.height);
+        // if ((circle1.x!=rect.x&&circle1.x!=rect2&&circle1.x!=rect1)&&
+        //     (circle1.y!=rect.y&&circle1.y!=rect1.y&&circle1.y!=rect2.y)){
+            circle1.y = randY;
+            circle1.x = randX;
+        // }
+
+        score++
+    }
+    if (checkCollision()){
+     alert("game over")
+           window.location.reload()
+
+        return
+    }
+      // pen.fillStyle = gradient;
+      pen.font = "90px Georgia";
+      pen.strokeText(score, 450, 70);
+      pen.fillText(score, 450, 70);
+
+    requestAnimationFrame(move)
+  }
+
+
+  function checkCollision() {
+      if ((((circle.x+circle.radius >= rect.x && rect.x + rect.width >= circle.x-circle.radius ) &&
+              (circle.y+circle.radius >= rect.y && circle.y-circle.radius<=rect.y+rect.height))||
+      ((circle.x+circle.radius >= rect1.x && rect1.x + rect1.width >= circle.x-circle.radius ) &&
+          (circle.y+circle.radius >= rect1.y && circle.y-circle.radius<=rect1.y+rect1.height))||
+          ((circle.x+circle.radius >= rect2.x && rect2.x + rect2.width >= circle.x-circle.radius ) &&
+              (circle.y+circle.radius >= rect2.y && circle.y-circle.radius<=rect2.y+rect2.height))))
+      {
+          return true;
+      }
+      return false;
+  }
+
+
+  function checkCrash(obj1,obj2) {
+      let left1 = obj1.x - obj1.radius;
+      let right1 = obj1.x + obj1.radius;
+      let top1 = obj1.y - obj1.radius;
+      let bottom1 = obj1.y + obj1.radius;
+
+      let left2 = obj2.x - obj2.radius;
+      let right2 = obj2.x + obj2.radius;
+      let top2 = obj2.y - obj2.radius;
+      let bottom2 = obj2.y + obj2.radius;
+
+      if(left1 > right2 || right1 < left2 || top1 > bottom2 || bottom1 < top2){
+          return false;
+      }
+      return true;
+  }
+
+  window.addEventListener("keydown",movePlayer);
+  function movePlayer(evt) {
+      switch (evt.key) {
+          case "ArrowLeft":
+          case "a":
+              circle.dir = "left";
+              break;
+          case "ArrowRight":
+          case "d":
+              circle.dir = "right";
+              break;
+          case "ArrowUp":
+          case "w":
+              circle.dir = "up";
+              break;
+          case "ArrowDown":
+          case "s":
+              circle.dir = "down";
+              break;
+      }
+  }
+
+  move();
+</script>
+</body>
+</html>
